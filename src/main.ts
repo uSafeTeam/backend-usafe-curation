@@ -12,6 +12,7 @@ async function bootstrap() {
       // forbidNonWhitelisted: false,
     }),
   );
-  await app.listen(8080, '0.0.0.0');
+  const port = parseInt(process.env.PORT || '', 10) || 8080;
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
