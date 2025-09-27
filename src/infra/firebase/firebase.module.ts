@@ -1,5 +1,6 @@
+// firebase.module.ts
 import { Module, Global } from '@nestjs/common';
-import { initializeApp, applicationDefault, cert } from 'firebase-admin/app';
+import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { getDatabase } from 'firebase-admin/database';
 
 @Global()
@@ -7,17 +8,11 @@ import { getDatabase } from 'firebase-admin/database';
   providers: [
     {
       provide: 'RTDB',
-      useFactory: async () => {
-        const projectId = process.env.FIREBASE_PROJECT_ID!;
-        const clientEmail = process.env.FIREBASE_CLIENT_EMAIL!;
-        const privateKey = (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
-        const databaseURL = process.env.FIREBASE_DB_URL!;
-
+      useFactory: () => {
         const app = initializeApp({
-          credential: cert({ projectId, clientEmail, privateKey }),
-          databaseURL,
+          credential: applicationDefault(),
+          databaseURL: process.env.FIREBASE_DB_URL!, // deixe só essa env
         });
-
         return getDatabase(app);
       },
     },
