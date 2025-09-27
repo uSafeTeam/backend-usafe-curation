@@ -12,7 +12,9 @@ async function bootstrap() {
       // forbidNonWhitelisted: false,
     }),
   );
-  const port = parseInt(process.env.PORT || '', 10) || 8080;
+  const port = Number(process.env.PORT) || 8080;
+  console.log('🚀 Boot iniciando | PORT=', process.env.PORT);
   await app.listen(port, '0.0.0.0');
+  console.log(`✅ Server ouvindo em http://0.0.0.0:${port}`);
 }
 bootstrap();
