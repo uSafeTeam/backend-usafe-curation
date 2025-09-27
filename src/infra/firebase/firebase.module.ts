@@ -1,14 +1,14 @@
 // src/infra/firebase/firebase.module.ts
 import { Module, Global } from '@nestjs/common';
-import { initializeApp, applicationDefault, cert, getApps } from 'firebase-admin/app';
+import { initializeApp, applicationDefault, cert, getApps, App } from 'firebase-admin/app';
 import { getDatabase, Database } from 'firebase-admin/database';
 
 @Global()
 @Module({
   providers: [
     {
-      provide: 'RTDB',
-      useFactory: (): Database => {
+      provide: 'FIREBASE_APP',
+      useFactory: (): App => {
         const databaseURL = process.env.FIREBASE_DB_URL;
         if (!databaseURL) {
           throw new Error('FIREBASE_DB_URL não definida');
@@ -18,32 +18,33 @@ import { getDatabase, Database } from 'firebase-admin/database';
         const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
         let privateKey    = process.env.FIREBASE_PRIVATE_KEY || '';
 
-        // Se vier com \n literais, converte; se já veio com quebras reais, isso é inofensivo
         if (privateKey.includes('\\n')) privateKey = privateKey.replace(/\\n/g, '\n');
 
         if (getApps().length === 0) {
           if (projectId && clientEmail && privateKey) {
-            // Caminho 1: usar credenciais via env/Secret Manager
-            initializeApp({
+            return initializeApp({
               credential: cert({ projectId, clientEmail, privateKey }),
               databaseURL,
             });
-            console.log('[Firebase] init: cert(env) + DB_URL');
           } else {
-            // Caminho 2: usar credencial padrão do Cloud Run (service account do serviço)
-            initializeApp({
+            return initializeApp({
               credential: applicationDefault(),
               databaseURL,
             });
-            console.log('[Firebase] init: applicationDefault() + DB_URL');
           }
         }
 
-        // retorna a instância padrão do banco de dados
-        return getDatabase();
+        return getApps()[0]; // se já existe, retorna o default
       },
     },
+    {
+      provide: 'RTDB',
+      useFactory: (app: App): Database => {
+        return getDatabase(app);
+      },
+      inject: ['FIREBASE_APP'],
+    },
   ],
-  exports: ['RTDB'],
+  exports: ['RTDB', 'FIREBASE_APP'],
 })
 export class FirebaseModule {}
