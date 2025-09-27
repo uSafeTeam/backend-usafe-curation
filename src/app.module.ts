@@ -14,15 +14,6 @@ import { FirebaseModule } from './infra/firebase/firebase.module';
       ignoreEnvFile: false,
     }),
     FirebaseModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: 'postgresql://postgres:CUfAFkwsSsZsYHLoFnsopOYgpDPpRKFi@hopper.proxy.rlwy.net:39398/railway',
-      autoLoadEntities: true, 
-      synchronize: false,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    }),
     NewProductsModule,
     CommonModule,
   ],
