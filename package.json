@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "gcp-build": "npm run build",
     "build": "nest build",
     "start": "node dist/main.js",
     "start:prod": "node dist/main.js",
