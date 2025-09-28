@@ -9,7 +9,7 @@ export class CryptoService {
 
   constructor(private config: ConfigService) {
     // sua chave secreta no env como hex de 32 bytes
-    const secret = this.config.get<string>('ENCRYPTION_SECRET');
+    const secret = "259a637885621660895867bbfc8ce357d06c0881b7b2a32305e1b269a019d4d3";
     if (!secret) {
       throw new Error('ENCRYPTION_SECRET is not defined in environment variables');
     }
