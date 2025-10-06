@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { Database } from 'firebase-admin/database';
 import { NewProductDto } from './dto/new_product.dto';
-import { UpdateNewProductDto } from './dto/update_new_product.dto';
 import { CryptoService } from '../common/crypto_service.service';
+import { UpdateNewProductDto } from './dto/update_new_product.dto';
 
 type NewProductModel = {
   name: string;
