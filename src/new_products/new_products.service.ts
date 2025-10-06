@@ -1,16 +1,20 @@
 // src/new_products/new_products.service.ts
-import { Injectable, Logger, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { Database } from 'firebase-admin/database';
 import { NewProductDto } from './dto/new_product.dto';
 import { UpdateNewProductDto } from './dto/update_new_product.dto';
-import { CryptoService } from 'src/common/crypto_service.service';
+import { CryptoService } from '../common/crypto_service.service';
 
 type NewProductModel = {
-  id: string;
   name: string;
   barcode: string;
   composition: string;
-  image_url: string;      // encrypted
+  image_url: string; // encrypted
   image_path: string;
   inserted_date?: string | Date | null;
   updated_date?: string | Date | null;
@@ -43,20 +47,21 @@ export class NewProductsService {
   async create(data: NewProductDto) {
     const { barcode, composition, image_url, inserted_date } = data;
     if (!barcode || !composition || !image_url) {
-      throw new BadRequestException('barcode, composition and image_url are required');
+      throw new BadRequestException(
+        'barcode, composition and image_url are required',
+      );
     }
 
     const encrypted = this.crypto.encrypt(image_url);
     const barcodeWithoutExt = this.normalizeBarcode(barcode);
 
-    const id = this.col().push().key!;
+    const id = barcodeWithoutExt;
     const model: NewProductModel = {
-      id,
       name: '',
-      barcode: barcodeWithoutExt,
+      barcode: id,
       composition,
       image_url: encrypted,
-      image_path: barcode,     // mantém original
+      image_path: barcode, // mantém original
       inserted_date: inserted_date ?? null,
       isAlreadyInFireBase: false,
     };
@@ -74,14 +79,19 @@ export class NewProductsService {
       if (data.name !== undefined) patch.name = data.name;
       if (data.composition !== undefined) patch.composition = data.composition;
       if (data.image_url !== undefined) patch.image_url = data.image_url; // já traga criptografado se quiser
-      if (data.barcode !== undefined) patch.barcode = this.normalizeBarcode(data.barcode);
+      if (data.barcode !== undefined)
+        patch.barcode = this.normalizeBarcode(data.barcode);
       if (data.business !== undefined) patch.business = data.business;
       if (data.country !== undefined) patch.country = data.country;
-      if (data.inserted_date !== undefined) patch.inserted_date = data.inserted_date;
-      if (data.updated_date !== undefined) patch.updated_date = data.updated_date ?? new Date().toISOString();
+      if (data.inserted_date !== undefined)
+        patch.inserted_date = data.inserted_date;
+      if (data.updated_date !== undefined)
+        patch.updated_date = data.updated_date ?? new Date().toISOString();
       if (data.who_update !== undefined) patch.who_update = data.who_update;
-      if (data.who_send_firebase !== undefined) patch.who_send_firebase = data.who_send_firebase;
-      if (data.is_definitive_image !== undefined) patch.is_definitive_image = data.is_definitive_image;
+      if (data.who_send_firebase !== undefined)
+        patch.who_send_firebase = data.who_send_firebase;
+      if (data.is_definitive_image !== undefined)
+        patch.is_definitive_image = data.is_definitive_image;
       if (data.image_path !== undefined) patch.image_path = data.image_path;
 
       // valida existência
@@ -91,12 +101,18 @@ export class NewProductsService {
       await this.col().child(id).update(patch);
       return true;
     } catch (error: any) {
-      this.logger.error(`Failed to update product ${id}`, error?.stack || String(error));
+      this.logger.error(
+        `Failed to update product ${id}`,
+        error?.stack || String(error),
+      );
       return false;
     }
   }
 
-  async goManyToFireBase(ids: string[], whoSendToFirebase: string): Promise<boolean> {
+  async goManyToFireBase(
+    ids: string[],
+    whoSendToFirebase: string,
+  ): Promise<boolean> {
     if (!ids || ids.length < 1) {
       throw new BadRequestException('ids to send to FireBase are required');
     }
@@ -127,7 +143,10 @@ export class NewProductsService {
 
   async findByAlreadyDataBase() {
     // query: ... where isAlreadyInFireBase == true
-    const q = await this.col().orderByChild('isAlreadyInFireBase').equalTo(true).get();
+    const q = await this.col()
+      .orderByChild('isAlreadyInFireBase')
+      .equalTo(true)
+      .get();
     if (!q.exists()) return [];
     const obj = q.val() as Record<string, NewProductModel>;
     return Object.values(obj);
