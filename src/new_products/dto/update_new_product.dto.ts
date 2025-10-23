@@ -14,10 +14,10 @@ export class UpdateNewProductDto {
   barcode?: string;
 
   @IsOptional()
-  business?: string;
+  brands?: string;
 
   @IsOptional()
-  country?: string;
+  countries?: string;
 
   @IsOptional()
   inserted_date?: Date;
@@ -34,6 +34,4 @@ export class UpdateNewProductDto {
   @IsOptional()
   is_definitive_image?: boolean;
 
-  @IsOptional()
-  image_path?: string;
 }

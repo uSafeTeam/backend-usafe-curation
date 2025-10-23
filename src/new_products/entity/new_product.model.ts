@@ -6,8 +6,8 @@ export interface NewProduct {
   isAlreadyInFireBase: boolean;
   image_url: string;
   barcode: string;
-  business: string;
-  country: string;
+  brands: string;
+  countries: string;
   image_path: string;
   inserted_date: string | Date;
   updated_date?: string | Date | null;

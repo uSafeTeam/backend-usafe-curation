@@ -18,8 +18,8 @@ type NewProductModel = {
   image_path: string;
   inserted_date?: string | Date | null;
   updated_date?: string | Date | null;
-  business?: string | null;
-  country?: string | null;
+  brands?: string | null;
+  countries?: string | null;
   who_update?: string | null;
   who_send_firebase?: string | null;
   is_definitive_image?: boolean | null;
@@ -59,14 +59,16 @@ export class NewProductsService {
     const model: NewProductModel = {
       name: '',
       barcode: id,
-      composition,
+      composition: composition,
       image_url: encrypted,
       image_path: barcode, // mantém original
       inserted_date: inserted_date ?? null,
       isAlreadyInFireBase: false,
     };
 
-    await this.col().child(id).set(model);
+    await this.col()
+      .child(id)
+      .set({ ['br']: model });
     return model;
   }
 
@@ -81,8 +83,8 @@ export class NewProductsService {
       if (data.image_url !== undefined) patch.image_url = data.image_url; // já traga criptografado se quiser
       if (data.barcode !== undefined)
         patch.barcode = this.normalizeBarcode(data.barcode);
-      if (data.business !== undefined) patch.business = data.business;
-      if (data.country !== undefined) patch.country = data.country;
+      if (data.brands !== undefined) patch.brands = data.brands;
+      if (data.countries !== undefined) patch.countries = data.countries;
       if (data.inserted_date !== undefined)
         patch.inserted_date = data.inserted_date;
       if (data.updated_date !== undefined)
@@ -92,7 +94,6 @@ export class NewProductsService {
         patch.who_send_firebase = data.who_send_firebase;
       if (data.is_definitive_image !== undefined)
         patch.is_definitive_image = data.is_definitive_image;
-      if (data.image_path !== undefined) patch.image_path = data.image_path;
 
       // valida existência
       const exists = (await this.col().child(id).get()).exists();
