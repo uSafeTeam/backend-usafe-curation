@@ -7,7 +7,7 @@ export interface NewProduct {
   image_url: string;
   barcode: string;
   brands: string;
-  countries: string;
+  country: string;
   image_path: string;
   inserted_date: string | Date;
   updated_date?: string | Date | null;

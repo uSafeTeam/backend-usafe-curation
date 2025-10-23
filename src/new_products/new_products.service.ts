@@ -19,7 +19,7 @@ type NewProductModel = {
   inserted_date?: string | Date | null;
   updated_date?: string | Date | null;
   brands?: string | null;
-  countries?: string | null;
+  country?: string | null;
   who_update?: string | null;
   who_send_firebase?: string | null;
   is_definitive_image?: boolean | null;
@@ -84,7 +84,7 @@ export class NewProductsService {
       if (data.barcode !== undefined)
         patch.barcode = this.normalizeBarcode(data.barcode);
       if (data.brands !== undefined) patch.brands = data.brands;
-      if (data.countries !== undefined) patch.countries = data.countries;
+      if (data.country !== undefined) patch.country = data.country;
       if (data.inserted_date !== undefined)
         patch.inserted_date = data.inserted_date;
       if (data.updated_date !== undefined)

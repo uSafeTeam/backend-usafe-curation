@@ -17,7 +17,7 @@ export class UpdateNewProductDto {
   brands?: string;
 
   @IsOptional()
-  countries?: string;
+  country?: string;
 
   @IsOptional()
   inserted_date?: Date;
